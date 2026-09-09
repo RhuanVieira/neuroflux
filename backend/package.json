@@ -1,0 +1,41 @@
+{
+  "name": "neuroflux-backend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch server/index.ts",
+    "build": "tsc -p tsconfig.server.json",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:seed": "prisma db seed"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.19.2",
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "express": "^5.2.1",
+    "google-auth-library": "^11.0.2",
+    "jsonwebtoken": "^9.0.3",
+    "multer": "^2.0.2",
+    "nodemailer": "^10.0.1",
+    "start": "^5.1.0",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.5",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/multer": "^2.0.0",
+    "@types/node": "^24.13.3",
+    "@types/nodemailer": "^8.0.1",
+    "prisma": "^6.19.2",
+    "tsx": "^4.21.0",
+    "typescript": "~6.0.2"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  }
+}

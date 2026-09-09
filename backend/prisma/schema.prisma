@@ -1,0 +1,89 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  MASTER
+  ADMIN
+  STUDENT
+}
+
+enum MaterialStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum EventType {
+  EVENT
+  ENTRANCE_EXAM
+  OLYMPIAD
+}
+
+model User {
+  id           Int       @id @default(autoincrement())
+  name         String    @db.VarChar(120)
+  email        String    @unique @db.VarChar(190)
+  auth0Id      String?   @unique @db.VarChar(190)
+  googleId     String?   @unique @db.VarChar(190)
+  passwordHash String    @db.VarChar(255)
+  emailVerifiedAt DateTime?
+  role         Role      @default(STUDENT)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  materials    Material[] @relation("AuthorMaterials")
+  events       Event[]    @relation("AuthorEvents")
+  emailVerificationCodes EmailVerificationCode[]
+}
+
+model EmailVerificationCode {
+  id        Int      @id @default(autoincrement())
+  codeHash  String   @db.Char(64)
+  expiresAt DateTime
+  usedAt    DateTime?
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@index([userId, expiresAt])
+}
+
+model Event {
+  id          Int       @id @default(autoincrement())
+  title       String    @db.VarChar(180)
+  description String    @db.Text
+  type        EventType
+  startsAt    DateTime
+  endsAt      DateTime?
+  location    String?   @db.VarChar(180)
+  link        String?   @db.VarChar(500)
+  authorId    Int
+  author      User      @relation("AuthorEvents", fields: [authorId], references: [id], onDelete: Restrict)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([type, startsAt])
+  @@index([authorId])
+}
+
+model Material {
+  id          Int            @id @default(autoincrement())
+  title       String         @db.VarChar(180)
+  description String         @db.Text
+  subject     String         @db.VarChar(100)
+  grade       Int?
+  fileUrl     String?        @db.VarChar(500)
+  content     String?        @db.LongText
+  status      MaterialStatus @default(DRAFT)
+  authorId    Int
+  author      User           @relation("AuthorMaterials", fields: [authorId], references: [id], onDelete: Restrict)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  @@index([status, grade])
+  @@index([authorId])
+}

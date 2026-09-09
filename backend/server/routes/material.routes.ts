@@ -1,0 +1,15 @@
+import { Role } from "@prisma/client";
+import { Router } from "express";
+import { createMaterial, deleteMaterial, getMaterial, listMaterials, updateMaterial, uploadMaterial } from "../controllers/material.controller.js";
+import { allow, authenticate } from "../middlewares/auth.js";
+import { upload } from "../config/upload.js";
+
+const router = Router();
+router.use(authenticate);
+router.get("/", listMaterials);
+router.get("/:id", getMaterial);
+router.post("/", allow(Role.ADMIN, Role.MASTER), createMaterial);
+router.post("/upload", allow(Role.ADMIN, Role.MASTER), upload.single("file"), uploadMaterial);
+router.patch("/:id", allow(Role.ADMIN, Role.MASTER), updateMaterial);
+router.delete("/:id", allow(Role.ADMIN, Role.MASTER), deleteMaterial);
+export default router;

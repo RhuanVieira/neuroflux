@@ -1,0 +1,11 @@
+import { Role } from "@prisma/client";
+import { Router } from "express";
+import { createEvent, deleteEvent, listEvents, updateEvent } from "../controllers/event.controller.js";
+import { allow, authenticate } from "../middlewares/auth.js";
+const router = Router();
+router.use(authenticate);
+router.get("/", listEvents);
+router.post("/", allow(Role.MASTER), createEvent);
+router.patch("/:id", allow(Role.MASTER), updateEvent);
+router.delete("/:id", allow(Role.MASTER), deleteEvent);
+export default router;
